@@ -71,5 +71,5 @@ def corr_coeff(pred, target):
 
 def kld_loss(pred, target):
 	loss = F.kl_div(pred, target, reduction='none')
-	loss = loss.sum(-1).sum(-1)
+	loss = loss.mean(-1).mean(-1)
 	return loss

@@ -15,10 +15,14 @@ class MIT1003Data(Dataset):
         self.images = glob.glob(os.path.join(self.image_path,'*.jpeg'))
         self.fiks = glob.glob(os.path.join(self.fixation_path,'*fixPts.jpg'))
         self.maps = glob.glob(os.path.join(self.fixation_path,'*fixMap.jpg'))
+        self.images.sort()
+        self.fiks.sort()
+        self.maps.sort()
 
     def __getitem__(self, index):
+        name = self.images[index]
         i = Image.open(self.images[index])
-        f = Image.open(self.fiks[index]).convert('L')
+        f = Image.open(self.fiks[index]).convert('1')
         m = Image.open(self.maps[index]).convert('L')
         itransform = transforms.Compose([
                                 transforms.Resize((256, 256), interpolation=Image.LANCZOS),
@@ -26,20 +30,21 @@ class MIT1003Data(Dataset):
                                 transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
                             ])
         ftransform = transforms.Compose([
-                                transforms.Resize((64, 64), interpolation=Image.NEAREST),
+                                transforms.Resize((64, 64)),
                                 transforms.ToTensor(),
                                 transforms.Lambda(lambda fix: torch.gt(fix, 0.5))
                             ])
         mtransform = transforms.Compose([
-                                transforms.Resize((64, 64), interpolation=Image.LANCZOS),
-                                transforms.ToTensor(),
-                                transforms.Lambda(normalize_tensor)
+                                transforms.Resize((64, 64)),
+                                transforms.ToTensor()
                             ])
         i = itransform(i)
         f = ftransform(f)
         m = mtransform(m)
-        return {'img': i, 'fix': f, 'map': m, 'name': self.images[index],
-                'fname': self.fiks[index], 'mname': self.maps[index]}}
+        return {'img': i, 'fix': f, 'map': m,
+                'name': self.images[index],
+                'fname': self.fiks[index],
+                'mname': self.maps[index]}
 
     def __len__(self):
         return len(self.images)

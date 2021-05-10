@@ -7,7 +7,8 @@ class SalTran(nn.Module):
         self.xformer = ResNet50ViT(img_dim=256, pretrained_resnet=True, classification=False)
         self.salmap = nn.Sequential(
             nn.Unflatten(2, (64, 64)),
-            nn.Conv2d(512, 1, 1)
+            nn.LayerNorm(64),
+            nn.Conv2d(64, 256, kernel_size=1, stride=1, bias=False)
         )
 
     def forward(self, x):
