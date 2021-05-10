@@ -25,7 +25,7 @@ class MIT1003Data(Dataset):
         f = Image.open(self.fiks[index]).convert('1')
         m = Image.open(self.maps[index]).convert('L')
         itransform = transforms.Compose([
-                                transforms.Resize((256, 256), interpolation=Image.LANCZOS),
+                                transforms.Resize((256, 256), interpolation=transforms.InterpolationMode.LANCZOS),
                                 transforms.ToTensor(),
                                 transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
                             ])
